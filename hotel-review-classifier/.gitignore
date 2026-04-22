@@ -1,0 +1,63 @@
+# Claude Code
+.claude/
+
+# Graphify cache
+graphify-out/cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+lib/
+lib64/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ML / Data
+*.pt
+*.pth
+*.bin
+*.h5
+*.pkl
+*.ckpt
+data/raw/
+data/processed/
+models/saved/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Secrets
+.env
+.env.*
+*.key
+secrets.json
+kaggle.json
