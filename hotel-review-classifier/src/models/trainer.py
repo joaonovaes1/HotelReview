@@ -18,9 +18,9 @@ class MultiTaskLoss(nn.Module):
         }
 
         # class weights para sentimento: dataset tem 71% positivo, 9% negativo
-        sentiment_class_w = torch.tensor([2.0, 1.0, 0.4])
+        self.register_buffer("sentiment_class_w", torch.tensor([2.0, 1.0, 0.4]))
 
-        self.loss_sentiment = nn.CrossEntropyLoss(weight=sentiment_class_w)
+        self.loss_sentiment = nn.CrossEntropyLoss(weight=self.sentiment_class_w)
         self.loss_category  = nn.BCEWithLogitsLoss()
         self.loss_rating    = nn.MSELoss()
         self.loss_priority  = nn.CrossEntropyLoss()
