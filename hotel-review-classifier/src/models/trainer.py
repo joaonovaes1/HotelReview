@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from sklearn.metrics import f1_score, mean_absolute_error
+from sklearn.metrics import f1_score, mean_absolute_error, classification_report
 
 
 class MultiTaskLoss(nn.Module):
@@ -97,7 +97,11 @@ def eval_epoch(model, loader: DataLoader, device):
             all_rating_preds.extend(rating_preds.cpu().tolist())
             all_rating_labels.extend(labels["label_rating"].cpu().tolist())
 
-    f1  = f1_score(all_sentiment_labels, all_sentiment_preds, average="macro")
-    mae = mean_absolute_error(all_rating_labels, all_rating_preds)
+    f1     = f1_score(all_sentiment_labels, all_sentiment_preds, average="macro")
+    mae    = mean_absolute_error(all_rating_labels, all_rating_preds)
+    report = classification_report(
+        all_sentiment_labels, all_sentiment_preds,
+        target_names=["negativo", "neutro", "positivo"],
+    )
 
-    return {"f1_macro": f1, "mae": mae}
+    return {"f1_macro": f1, "mae": mae, "report": report}

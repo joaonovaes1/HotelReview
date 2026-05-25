@@ -63,3 +63,7 @@ secrets.json
 kaggle.json
 
 /teoria
+
+# 2VA — runtime artifacts
+2VA/results/tmp/
+2VA/results/log_*.txt
