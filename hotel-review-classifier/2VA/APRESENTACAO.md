@@ -139,23 +139,25 @@ O t-test assume distribuição normal. Métricas de deep learning com 30 amostra
 
 ---
 
-### C — Ensemble (preencher após rodar notebook 03)
+### C — Ensemble (30 seeds)
 
 | Métrica | Média | Desvio padrão | Mín | Máx |
 |---------|-------|---------------|-----|-----|
-| F1 macro | — | — | — | — |
-| MAE | — | — | — | — |
+| F1 macro | **0.6932** | 0.0563 | 0.5865 | 0.7958 |
+| MAE | **0.1425** | 0.0118 | 0.1267 | 0.1670 |
+
+**O ganho do ensemble:** +0.058 no F1 (↑9.1%) e −0.014 no MAE (↓9.1%).
 
 ---
 
 ### Wilcoxon — Veredicto
 
-| Métrica | p-value | Decisão |
-|---------|---------|---------|
-| F1 macro | — | — |
-| MAE | — | — |
+| Métrica | W | p-value | Decisão |
+|---------|---|---------|---------|
+| F1 macro | 424.0 | **0.000009** | REJEITA H0 |
+| MAE | 53.5 | **0.000116** | REJEITA H0 |
 
-**Veredicto final:** ___
+**Veredicto final: H1 ACEITA — o ensemble é estatisticamente superior em ambas as métricas (α = 0.05).**
 
 ---
 
