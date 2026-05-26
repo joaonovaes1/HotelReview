@@ -161,18 +161,6 @@ O t-test assume distribuição normal. Métricas de deep learning com 30 amostra
 
 ---
 
-### Argumento independente do resultado
-
-**Se H1 for aceita** (ensemble superior):
-> "O ensemble reduziu a variabilidade e melhorou o F1 de forma estatisticamente significativa. A média de 3 modelos independentes cancela erros idiossincráticos de cada treino."
-
-**Se H0 for mantida** (sem diferença significativa):
-> "Com 2.000 amostras e 2 epochs, o modelo já convergiu para uma região de performance estável. O ganho marginal do ensemble não foi suficiente para superar a variância natural do processo de treino — o que sugere que, neste regime de dados, o custo computacional do ensemble (3x) não se justifica."
-
-**Ambos os casos são válidos para o relatório IEEE — o experimento foi rigoroso independentemente do resultado.**
-
----
-
 ### Referência rápida dos arquivos
 
 | Arquivo | O que é |
