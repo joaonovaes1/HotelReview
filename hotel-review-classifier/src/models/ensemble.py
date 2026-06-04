@@ -1,9 +1,10 @@
 import torch
+import torch.nn.functional as F
 from transformers import AutoTokenizer
 from src.models.classifier import HotelReviewClassifier
 
 
-class ReviewInference:
+class EnsembleInference:
 
     SENTIMENT_LABELS = {0: "negativo", 1: "neutro", 2: "positivo"}
     PRIORITY_LABELS  = {0: "normal",   1: "alta"}
@@ -12,15 +13,23 @@ class ReviewInference:
         "alimentação", "preço", "conforto", "wifi", "instalações",
     ]
 
-    def __init__(self, checkpoint_path: str, device: str = None):
+    def __init__(self, checkpoint_paths: list, device: str = None):
         self.device = torch.device(device if device else ("cuda" if torch.cuda.is_available() else "cpu"))
         self.tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
-        self.model = HotelReviewClassifier()
-        self.model.load_state_dict(
-            torch.load(checkpoint_path, map_location=self.device)
-        )
-        self.model.to(self.device)
-        self.model.eval()
+        self.models = []
+        for path in checkpoint_paths:
+            m = HotelReviewClassifier()
+            m.load_state_dict(torch.load(path, map_location=self.device))
+            m.to(self.device)
+            m.eval()
+            self.models.append(m)
+
+    def _aggregate(self, outputs_list: list) -> dict:
+        sentiment = torch.stack([F.softmax(o["sentiment"], dim=1) for o in outputs_list]).mean(0)
+        priority  = torch.stack([F.softmax(o["priority"],  dim=1) for o in outputs_list]).mean(0)
+        category  = torch.stack([torch.sigmoid(o["category"]) for o in outputs_list]).mean(0)
+        rating    = torch.stack([o["rating"] for o in outputs_list]).mean(0)
+        return {"sentiment": sentiment, "priority": priority, "category": category, "rating": rating}
 
     def predict(self, text: str) -> dict:
         encoded = self.tokenizer(
@@ -35,12 +44,14 @@ class ReviewInference:
         attention_mask = encoded["attention_mask"].to(self.device)
 
         with torch.no_grad():
-            outputs = self.model(input_ids, attention_mask)
+            outputs_list = [m(input_ids, attention_mask) for m in self.models]
 
-        sentiment_idx = outputs["sentiment"].argmax(dim=1).item()
-        priority_idx  = outputs["priority"].argmax(dim=1).item()
-        category_probs = torch.sigmoid(outputs["category"]).squeeze(0)
-        rating_norm    = outputs["rating"].squeeze().item()
+        agg = self._aggregate(outputs_list)
+
+        sentiment_idx  = agg["sentiment"].argmax(dim=1).item()
+        priority_idx   = agg["priority"].argmax(dim=1).item()
+        category_probs = agg["category"].squeeze(0)
+        rating_norm    = agg["rating"].squeeze().item()
 
         return {
             "sentiment":  self.SENTIMENT_LABELS[sentiment_idx],
